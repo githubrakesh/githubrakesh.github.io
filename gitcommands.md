@@ -75,16 +75,24 @@ find . -name '.git' -exec rm -rf {} \;
 ```
 ### Remove all new files
 ```shell
-for file in $(git status | grep "new file" | sed "s/#\tnew file://"); do git rm --cached $file; done
+for file in $(git status | grep "new file" | sed "s/#\tnew file://"); 
+do git rm --cached $file; 
+done
 ```
 ### Delete all remote branches
 ```shell
-for remote_branch in $(git ls-remote); do if [[ $remote_branch =~ .*(feature/MAGENTA-([0-9|^130]).+).* ]]; then git push origin :${BASH_REMATCH[1]}; fi; done
+for remote_branch in $(git ls-remote);
+do if [[ $remote_branch =~ .*(feature/MAGENTA-([0-9|^130]).+).* ]]; 
+then git push origin :${BASH_REMATCH[1]}; 
+fi;
+done
 ```
 
 ### Removes all local branch
 ```shell
-for branch in $(git branch | grep "feature/MAGENTA-"); do git branch -D $branch; done
+for branch in $(git branch | grep "feature/MAGENTA-"); 
+do git branch -D $branch;
+done
 ```
 
 ### get list of followers from github username
@@ -119,7 +127,10 @@ for i in `git remote`; do git push $i; done;
 
 ### cherry pick range of commits, starting from the tip of 'master', into 'preview' branch
 ```shell
-git rev-list --reverse --topo-order master... | while read rev; do git checkout preview; git cherry-pick $rev || break; done
+git rev-list --reverse --topo-order master... | while read rev; 
+do git checkout preview; 
+git cherry-pick $rev || break; 
+done
 ```
 
 ### create tracking branches for all remote branches
@@ -129,7 +140,9 @@ git branch -a | grep -v HEAD | perl -ne 'chomp($_); s|^\*?\s*||; if (m|(.+)/(.+)
 
 ### git reset newly added files
 ```shell
-for f in `git status | grep new | awk '{print $3}'`; do git reset HEAD $f ; done
+for f in `git status | grep new | awk '{print $3}'`; 
+do git reset HEAD $f ; 
+done
 ```
 
 ### git reset newly added files
@@ -149,7 +162,11 @@ git log --oneline | nl -v0 | sed 's/^ \+/&HEAD~/'
 
 ### list offsets from HEAD with git log
 ```shell
-o=0; git log --oneline | while read l; do printf "%+9s %s\n" "HEAD~${o}" "$l"; o=$(($o+1)); done | less
+o=0; 
+git log --oneline | while read l;
+do printf "%+9s %s\n" "HEAD~${o}" "$l";
+o=$(($o+1)); 
+done | less
 ```
 
 ### diff the last 2 commits
@@ -159,7 +176,10 @@ git diff $(git log --pretty=format:%h -2 --reverse | tr "\n" " ")
 
 ### reset the last modified time for each file in a git repo to its last commit time
 ```shell
-git ls-files | while read file; do echo $file; touch -d $(git log --date=local -1 --format="@%ct" "$file") "$file"; done
+git ls-files | while read file;
+do echo $file; 
+touch -d $(git log --date=local -1 --format="@%ct" "$file") "$file";
+done
 ```
 
 ### get author and email of a commit 
@@ -245,7 +265,12 @@ git tag -a 1.2 -m "Version 1.2 Stable"
 ```
 ### show which branches are tracking what
 ```shell
-git for-each-ref --format='%(refname:short)' refs/heads/* | while read b; do if r=$(git config --get branch.$b.remote); then m=$(git config --get branch.$b.merge); echo "$b -> $r/${m##*/}"; fi; done
+git for-each-ref --format='%(refname:short)' refs/heads/* | while read b; 
+do if r=$(git config --get branch.$b.remote);
+then m=$(git config --get branch.$b.merge); 
+echo "$b -> $r/${m##*/}"; 
+fi;
+done
 ```
 ### push tags
 ```shell
@@ -317,7 +342,10 @@ git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -5
 ```
 ### delete all tags
 ```shell
-for t in `git tag` do; git push origin :$t; git tag -d $t; done
+for t in `git tag` do; 
+git push origin :$t; 
+git tag -d $t; 
+done
 ```
 ### compress all repos
 ```shell
@@ -361,7 +389,8 @@ git rev-parse --show-toplevel
 ```
 ### recommit last commit
 ```shell
-LAST_MESSAGE=`git log -1 --pretty="format:%s"`; git commit -m "$LAST_MESSAGE" --amend --date "`date`"
+LAST_MESSAGE=`git log -1 --pretty="format:%s"`; 
+git commit -m "$LAST_MESSAGE" --amend --date "`date`"
 ```
 ### Get a list of all TODO/FIXME tasks left to be done in your project
 ```shell
@@ -377,7 +406,9 @@ git log --pretty=oneline --abbrev-commit
 ```
 ### Lint Git unstaged PHP files
 ```shell
-git status -s | grep -o ' \S*php$' | while read f; do php -l $f; done
+git status -s | grep -o ' \S*php$' | while read f; 
+do php -l $f; 
+done
 ```
 ### 100% rollback files to a specific revision
 ```shell
@@ -385,7 +416,10 @@ git reset --hard <commidId> && git clean -f
 ```
 ### Print out the contents of a Git repository (useful for broken repositories)
 ```shell
-find .git/objects -type f -printf "%P\n" | sed s,/,, | while read object; do echo "=== $obj $(git cat-file -t $object) ==="; git cat-file -p $object; done
+find .git/objects -type f -printf "%P\n" | sed s,/,, | while read object;
+do echo "=== $obj $(git cat-file -t $object) ==="; 
+git cat-file -p $object; 
+done
 ```
 ### Show git branches by date - useful for showing active branches
 ```shell
@@ -469,7 +503,9 @@ git remote -v | grep fetch | sed 's/\(.*github.com\)[:|/]\(.*\).git (fetch)/\2/'
 ```
 ### Show git branches by date - useful for showing active branches
 ```shell
-for k in $(git branch | sed /\*/d); do echo "$(git log -1 --pretty=format:"%ct" $k) $k"; done | sort -r | awk '{print $2}'
+for k in $(git branch | sed /\*/d);
+do echo "$(git log -1 --pretty=format:"%ct" $k) $k";
+done | sort -r | awk '{print $2}'
 ```
 ### Update (pull commits from) all submodules
 ```shell
@@ -492,15 +528,22 @@ git rev-list --reverse HEAD | awk "/$(git log -n 1 --pretty="format:%h")/ {print
 curl -s 'http://whatthecommit.com/' | grep '<p>' | cut -c4-
 ```
 ### Show git branches by date - useful for showing active branches
-for k in `git branch|sed s/^..//`;do echo -e `git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" "$k" --`\\t"$k";done|sort
-
+```shell
+for k in `git branch|sed s/^..//`;
+do echo -e `git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" "$k" --`\\t"$k";
+done|sort
+```
 ### git Output remote origin from within a local repository
 ```shell
 git config --local --get remote.origin.url
 ```
 ### delete local *and* remote git repos if merged into local master
 ```shell
-git branch | cut -c3- | grep -v "^master$" | while read line; do git branch -d $line; done | grep 'Deleted branch' | awk '{print $3;}' | while read line; do git push <target_remote> :$line; done
+git branch | cut -c3- | grep -v "^master$" | while read line; 
+do git branch -d $line; 
+done | grep 'Deleted branch' | awk '{print $3;}' | while read line; 
+do git push <target_remote> :$line; 
+done
 ```
 ### Using Git, stage all manually deleted files.
 ```shell
@@ -544,7 +587,18 @@ curl -s http://whatthecommit.com | sed -n '/<p>/,/<\/p>/p' | sed '$d' | sed 's/<
 ```
 ### telling you from where your commit come from
 ```shell
-function where(){ COUNT=0; while [ `where_arg $1~$COUNT | wc -w` == 0 ]; do let COUNT=COUNT+1; done; echo "$1 is ahead of "; where_arg $1~$COUNT; echo "by $COUNT commits";};function where_arg(){ git log $@ --decorate -1 | head -n1 | cut -d ' ' -f3- ;}
+function where(){ 
+COUNT=0; 
+while [ `where_arg $1~$COUNT | wc -w` == 0 ]; 
+do let COUNT=COUNT+1; 
+done; 
+echo "$1 is ahead of "; 
+where_arg $1~$COUNT; 
+echo "by $COUNT commits";
+};
+function where_arg(){ 
+git log $@ --decorate -1 | head -n1 | cut -d ' ' -f3- ;
+}
 ```
 ### Show the changed files in your GIT repo
 ```shell
@@ -569,7 +623,7 @@ git log --format='%aN <%aE>' | awk '{arr[$0]++} END{for (i in arr){print arr[i],
 ```
 ### See all the commits for which searchstring appear in the git diff
 ```shell
-git log -p -z | perl -ln0e 'print if /[+-].*searchedstring/'
+    git log -p -z | perl -ln0e 'print if /[+-].*searchedstring/'
 ```
 ### List every file that has ever existed in a git repository
 ```shell
@@ -577,7 +631,10 @@ git log --all --pretty=format:" " --name-only | sort -u
 ```
 ### git pull all repos
 ```shell
-find ~ -maxdepth 2 -name .git -print | while read repo; do cd $(dirname $repo); git pull; done
+find ~ -maxdepth 2 -name .git -print | while read repo; 
+do cd $(dirname $repo); 
+git pull; 
+done
 ```
 ### Add .gitignore files to all empty directories recursively from your current directory
 ```shell
@@ -597,7 +654,9 @@ git shortlog -s | cut -c8-
 ```
 ### Show git branches by date - useful for showing active branches
 ```shell
-for k in `git branch|sed s/^..//`;do echo -e `git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" "$k"`\\t"$k";done|sort
+for k in `git branch|sed s/^..//`;
+do echo -e `git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" "$k"`\\t"$k";
+done|sort
 ```
 ### Move all files untracked by git into a directory
 ```shell
@@ -605,7 +664,9 @@ git clean -n | sed 's/Would remove //; /Would not remove/d;' | xargs mv -t stuff
 ```
 ### Prints per-line contribution per author for a GIT repository
 ```shell
-git ls-files | while read i; do git blame $i | sed -e 's/^[^(]*(//' -e 's/^\([^[:digit:]]*\)[[:space:]]\+[[:digit:]].*/\1/'; done | sort | uniq -ic | sort -nr
+git ls-files | while read i;
+do git blame $i | sed -e 's/^[^(]*(//' -e 's/^\([^[:digit:]]*\)[[:space:]]\+[[:digit:]].*/\1/';
+done | sort | uniq -ic | sort -nr
 ```
 ### Prints per-line contribution per author for a GIT repository
 ```shell
@@ -613,7 +674,11 @@ git ls-files | xargs -n1 -d'\n' -i git-blame {} | perl -n -e '/\s\((.*?)\s[0-9]{
 ```
 ### Makes a project directory, unless it exists; changes into the dir, and creates an empty git repository, all in one command
 ```shell
-gitstart () { if ! [[ -d "$@" ]]; then mkdir -p "$@" && cd "$@" && git init; else cd "$@" && git init; fi }
+gitstart () { 
+if ! [[ -d "$@" ]]; 
+then mkdir -p "$@" && cd "$@" && git init; 
+else cd "$@" && git init; 
+fi }
 ```
 ### git Revert files with changed mode, not content
 ```shell
@@ -645,7 +710,9 @@ git ls-files -z --deleted | xargs -0 git rm
 ```
 ### Show git branches by date - useful for showing active branches
 ```shell
-for k in `git branch|perl -pe s/^..//`;do echo -e `git show --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" $k|head -n 1`\\t$k;done|sort -r
+for k in `git branch|perl -pe s/^..//`;
+do echo -e `git show --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" $k|head -n 1`\\t$k;
+done|sort -r
 ```
 ### add forgotten changes to the last git commit
 ```shell
@@ -709,7 +776,9 @@ git archive HEAD --format=zip -o `git rev-parse HEAD`.zip
 ```
 ### List files under current directory, ignoring repository copies.
 ```shell
-function have_here { find "${@:-.}" -type d \( -name .git -o -name .svn -o -name .bzr -o -name CVS -o -name .hg -o -name __pycache__ \) -prune -o -type f -print; }
+function have_here { 
+    find "${@:-.}" -type d \( -name .git -o -name .svn -o -name .bzr -o -name CVS -o -name .hg -o -name __pycache__ \) -prune -o -type f -print
+}
 ```
 ### revert the unstaged modifications in a git working directory
 ```shell
@@ -721,7 +790,10 @@ curl -s http://whatthecommit.com/ | tr -s '\n' ' ' | grep -so 'p>\(.*\)</p' | se
 ```
 ### random git commit message
 ```shell
-git-random(){ gitRan=$(curl -L -s http://whatthecommit.com/ |grep -A 1 "\"c" |tail -1 |sed  's/<p>//'); git commit -m "$gitRan"; }
+git-random(){ 
+    gitRan=$(curl -L -s http://whatthecommit.com/ |grep -A 1 "\"c" |tail -1 |sed  's/<p>//'); 
+    git commit -m "$gitRan"; 
+}
 ```
 ### rename a branch
 ```shell
@@ -765,7 +837,13 @@ git branch -a
 ```
 ### install a new git repo
 ```shell
-function gitinstall(){ git init; git remote add origin "$@"; git config branch.master.remote origin; git config branch.master.merge refs/heads/master; git pull;}
+function gitinstall(){ 
+git init; 
+git remote add origin "$@"; 
+git config branch.master.remote origin; 
+git config branch.master.merge refs/heads/master; 
+git pull;
+}
 ```
 ### git recursive rm
 ```shell
